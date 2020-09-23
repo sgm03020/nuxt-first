@@ -85,6 +85,11 @@ export default {
           title: '予約カレンダー',
           to: '/schedule',
         },
+        {
+          icon: 'mdi-chart-bubble',
+          title: '週間',
+          to: '/weekly',
+        },
       ],
       miniVariant: false,
       right: true,

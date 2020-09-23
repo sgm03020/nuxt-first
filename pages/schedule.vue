@@ -1,7 +1,7 @@
 <template>
   <v-layout>
     <v-flex class="text-center">
-      <div class="container">
+      <div class="container pa-0">
         <FullCalendar />
       </div>
     </v-flex>
