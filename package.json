@@ -32,7 +32,8 @@
     "@nuxtjs/pwa": "^3.0.2",
     "core-js": "^3.6.5",
     "cross-env": "^7.0.2",
-    "nuxt": "^2.14.5"
+    "nuxt": "^2.14.5",
+    "vue-good-table": "^2.21.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^9.1.2",
