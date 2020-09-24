@@ -1,101 +1,112 @@
 <template>
-  <!-- <div class="container ma-0 pa-0"> -->
-  <table class="table" border="1">
-    <thead>
-      <tr>
-        <!-- <th v-for="(column, index) in columns" :key="index">{{column}}</th> -->
-        <th rowspan="5">時刻</th>
-        <th colspan="3">2020年9月</th>
-        <th colspan="4">2020年10月</th>
-      </tr>
-      <!-- ダミーtr -->
-      <tr class="dummy-top">
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-      </tr>
-      <tr class="days">
-        <th>
-          <span data-style="num">28</span>
-        </th>
-        <th>
-          <span data-style="num">29</span>
-        </th>
-        <th>
-          <span data-style="num">30</span>
-        </th>
-        <th>
-          <span data-style="num">1</span>
-        </th>
-        <th>
-          <span data-style="num">2</span>
-        </th>
-        <th>
-          <span data-style="num">3</span>
-        </th>
-        <th>
-          <span data-style="num">4</span>
-        </th>
-      </tr>
-      <tr class="dow">
-        <th>
-          <span data-style="dow">(月)</span>
-        </th>
-        <th>
-          <span data-style="dow">(火)</span>
-        </th>
-        <th>
-          <span data-style="dow">(水)</span>
-        </th>
-        <th>
-          <span data-style="dow">(木)</span>
-        </th>
-        <th>
-          <span data-style="dow">(金)</span>
-        </th>
-        <th>
-          <span data-style="dow">(土)</span>
-        </th>
-        <th>
-          <span data-style="dow">(日)</span>
-        </th>
-      </tr>
-      <tr class="dummy-bottom">
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(item, index) in baseItems" :key="index">
-        <!-- <td v-for="(column, indexColumn) in columns" :key="indexColumn">{{item[column]}}</td> -->
-        <td>{{item[columns[0]]}}</td>
-        <td>
-          <!-- <v-btn block depressed>0-{{index}}-{{item[columns[1]]}}</v-btn> -->
-          <button type="button" class="clear-decoration" v-on:click="greet">0-{{index}}-{{item[columns[1]]}}</button>
-        </td>
-        <td>1-{{index}}-{{item[columns[2]]}}</td>
-        <td>2-{{index}}-{{item[columns[3]]}}</td>
-        <td>3-{{index}}-{{item[columns[4]]}}</td>
-        <td>4-{{index}}-{{item[columns[5]]}}</td>
-        <td>5-{{index}}-{{item[columns[6]]}}</td>
-        <td>6-{{index}}-{{item[columns[7]]}}</td>
-      </tr>
-    </tbody>
-  </table>
-  <!-- </div> -->
+  <div class="container ma-0 pa-0">
+    <h1>ip={{ ip }}</h1>
+    <table class="table" border="1">
+      <thead>
+        <tr>
+          <!-- <th v-for="(column, index) in columns" :key="index">{{column}}</th> -->
+          <th rowspan="5">時刻</th>
+          <th colspan="3">2020年9月</th>
+          <th colspan="4">2020年10月</th>
+        </tr>
+        <!-- ダミーtr -->
+        <tr class="dummy-top">
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+        <tr class="days">
+          <th>
+            <span data-style="num">28</span>
+          </th>
+          <th>
+            <span data-style="num">29</span>
+          </th>
+          <th>
+            <span data-style="num">30</span>
+          </th>
+          <th>
+            <span data-style="num">1</span>
+          </th>
+          <th>
+            <span data-style="num">2</span>
+          </th>
+          <th>
+            <span data-style="num">3</span>
+          </th>
+          <th>
+            <span data-style="num">4</span>
+          </th>
+        </tr>
+        <tr class="dow">
+          <th>
+            <span data-style="dow">(月)</span>
+          </th>
+          <th>
+            <span data-style="dow">(火)</span>
+          </th>
+          <th>
+            <span data-style="dow">(水)</span>
+          </th>
+          <th>
+            <span data-style="dow">(木)</span>
+          </th>
+          <th>
+            <span data-style="dow">(金)</span>
+          </th>
+          <th>
+            <span data-style="dow">(土)</span>
+          </th>
+          <th>
+            <span data-style="dow">(日)</span>
+          </th>
+        </tr>
+        <tr class="dummy-bottom">
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in baseItems" :key="index">
+          <!-- <td v-for="(column, indexColumn) in columns" :key="indexColumn">{{item[column]}}</td> -->
+          <td>{{item[columns[0]]}}</td>
+          <td>
+            <!-- <v-btn block depressed>0-{{index}}-{{item[columns[1]]}}</v-btn> -->
+            <button
+              type="button"
+              class="clear-decoration"
+              v-on:click="greet"
+            >0-{{index}}-{{item[columns[1]]}}</button>
+          </td>
+          <td>1-{{index}}-{{item[columns[2]]}}</td>
+          <td>2-{{index}}-{{item[columns[3]]}}</td>
+          <td>3-{{index}}-{{item[columns[4]]}}</td>
+          <td>4-{{index}}-{{item[columns[5]]}}</td>
+          <td>5-{{index}}-{{item[columns[6]]}}</td>
+          <td>6-{{index}}-{{item[columns[7]]}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
 export default {
+  props: {
+    ip: {
+      type: String,
+      default: '0.0.0.0',
+    },
+  },
   data() {
     return {
       baseItems: [
@@ -183,8 +194,8 @@ export default {
       if (event) {
         alert(event.target.tagName)
       }
-    }
-  }  
+    },
+  },
 }
 </script>
 

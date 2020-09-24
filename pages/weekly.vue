@@ -9,7 +9,7 @@
     <!-- <ItemForHour /> -->
     <!-- <WeeklyGoodTable /> -->
     <!-- <WeeklyTest /> -->
-    <WeeklyRawTable />
+    <WeeklyRawTable :ip="ip"/>
   </div>
 </template>
 
@@ -27,6 +27,12 @@ export default {
     WeeklyGoodTable,
     WeeklyRawTable,
     WeeklyTest,    
+  },
+  async asyncData({ $axios }) {
+    // asyncData という nuxt 特有の機能において
+    //console.log("asyncData...");
+    const ip = await $axios.$get('http://icanhazip.com')
+    return { ip }
   },
 }
 </script>
