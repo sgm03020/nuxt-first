@@ -559,12 +559,6 @@
   </div>
 </template>
 
-<style>
-.container {
-  padding: 0 !important;
-}
-</style>
-
 <style lang="scss" scoped>
 * {
   padding: 0;

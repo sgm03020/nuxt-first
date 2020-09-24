@@ -42,7 +42,7 @@
       </v-btn>
     </v-app-bar>
     <v-main>
-      <v-container>
+      <v-container ma-0 pa-0>
         <nuxt />
       </v-container>
     </v-main>
