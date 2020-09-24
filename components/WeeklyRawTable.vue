@@ -75,8 +75,19 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(item, index) in items" :key="index">
-        <td v-for="(column, indexColumn) in columns" :key="indexColumn">{{item[column]}}</td>
+      <tr v-for="(item, index) in baseItems" :key="index">
+        <!-- <td v-for="(column, indexColumn) in columns" :key="indexColumn">{{item[column]}}</td> -->
+        <td>{{item[columns[0]]}}</td>
+        <td>
+          <!-- <v-btn block depressed>0-{{index}}-{{item[columns[1]]}}</v-btn> -->
+          <button type="button" class="clear-decoration" v-on:click="greet">0-{{index}}-{{item[columns[1]]}}</button>
+        </td>
+        <td>1-{{index}}-{{item[columns[2]]}}</td>
+        <td>2-{{index}}-{{item[columns[3]]}}</td>
+        <td>3-{{index}}-{{item[columns[4]]}}</td>
+        <td>4-{{index}}-{{item[columns[5]]}}</td>
+        <td>5-{{index}}-{{item[columns[6]]}}</td>
+        <td>6-{{index}}-{{item[columns[7]]}}</td>
       </tr>
     </tbody>
   </table>
@@ -87,41 +98,93 @@
 export default {
   data() {
     return {
-      items: [
+      baseItems: [
         {
           hour: '9:00',
-          h1: '〇',
-          h2: '〇',
-          h3: '〇',
-          h4: '〇',
-          h5: '〇',
-          h6: '〇',
-          h7: '〇',
+          d1: 'A',
+          d2: 'B',
+          d3: 'C',
+          d4: 'D',
+          d5: 'E',
+          d6: 'F',
+          d7: 'G',
         },
         {
           hour: '10:00',
-          h1: '〇',
-          h2: '〇',
-          h3: '〇',
-          h4: '〇',
-          h5: '〇',
-          h6: '〇',
-          h7: '〇',
+          d1: 'a',
+          d2: 'b',
+          d3: 'c',
+          d4: 'd',
+          d5: 'e',
+          d6: 'f',
+          d7: 'g',
         },
         {
           hour: '11:00',
-          h1: '〇',
-          h2: '〇',
-          h3: '〇',
-          h4: '〇',
-          h5: '〇',
-          h6: '〇',
-          h7: '〇',
+          d1: 'X',
+          d2: 'Y',
+          d3: 'Z',
+          d4: 'I',
+          d5: 'F',
+          d6: 'M',
+          d7: 'N',
+        },
+        {
+          hour: '12:00',
+          d1: 'x',
+          d2: 'y',
+          d3: 'z',
+          d4: 'i',
+          d5: 'f',
+          d6: 'm',
+          d7: 'n',
         },
       ],
-      columns: ['hour', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7'],
+      items: [
+        {
+          hour: '9:00',
+          d1: '〇',
+          d2: '〇',
+          d3: '〇',
+          d4: '〇',
+          d5: '〇',
+          d6: '〇',
+          d7: '〇',
+        },
+        {
+          hour: '10:00',
+          d1: '〇',
+          d2: '〇',
+          d3: '〇',
+          d4: '〇',
+          d5: '〇',
+          d6: '〇',
+          d7: '〇',
+        },
+        {
+          hour: '11:00',
+          d1: '〇',
+          d2: '〇',
+          d3: '〇',
+          d4: '〇',
+          d5: '〇',
+          d6: '〇',
+          d7: '〇',
+        },
+      ],
+      columns: ['hour', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7'],
     }
   },
+  methods: {
+    greet: function (event) {
+      alert('Hello ' + this.columns[0] + '!')
+      alert('Hello ' + this.baseItems[0][this.columns[0]] + '!')
+      // `event` は、ネイティブ DOM イベントです
+      if (event) {
+        alert(event.target.tagName)
+      }
+    }
+  }  
 }
 </script>
 
@@ -212,5 +275,19 @@ tr.dummy-top {
 }
 tr.dummy-bottom {
   height: 0.1rem;
+}
+
+// ボタン
+button.clear-decoration {
+  border: none; /* 枠線を消す */
+  outline: none; /* クリックしたときに表示される枠線を消す */
+  background: transparent; /* 背景の灰色を消す */
+}
+
+.decorated {
+  cursor: pointer; /* マウスカーソルを乗せると指になる */
+  outline: none;
+  border: 1px solid #f00;
+  background-color: rgb(255, 0, 0, 0.2);
 }
 </style>
