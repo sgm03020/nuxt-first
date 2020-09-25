@@ -3,6 +3,7 @@
     <h3>ip={{ ip }}</h3>
     <h3>count={{ count }}</h3>
     <h3>propcount={{ propcount }}</h3>
+    <h3>now={{ now }}</h3>
     <table class="table" border="1">
       <thead>
         <tr>
@@ -118,6 +119,10 @@ export default {
       type: Number,
       default: 0,
     },
+    now: {
+      type: String,
+      default: null,
+    }
   },
   data() {
     return {
