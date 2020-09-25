@@ -42,6 +42,7 @@
       </v-btn>
     </v-app-bar>
     <v-main>
+      <!-- 以下のma-0 pa-0を付加してpaddingをなくした -->
       <v-container ma-0 pa-0>
         <nuxt />
       </v-container>
@@ -89,6 +90,11 @@ export default {
           icon: 'mdi-chart-bubble',
           title: '週間',
           to: '/weekly',
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Debug',
+          to: '/debug',
         },
       ],
       miniVariant: false,

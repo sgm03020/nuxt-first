@@ -9,7 +9,8 @@
     <!-- <ItemForHour /> -->
     <!-- <WeeklyGoodTable /> -->
     <!-- <WeeklyTest /> -->
-    <WeeklyRawTable :ip="ip"/>
+    <h2>{{count}}</h2>
+    <WeeklyRawTable :ip="ip" :propcount="count"/>
   </div>
 </template>
 
@@ -34,6 +35,12 @@ export default {
     const ip = await $axios.$get('http://icanhazip.com')
     return { ip }
   },
+  computed: {
+    count() {
+      console.log('Call the computed count')
+      return this.$store.state.counter.count
+    },
+  },  
 }
 </script>
 

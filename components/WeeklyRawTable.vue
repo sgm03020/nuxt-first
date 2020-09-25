@@ -1,6 +1,8 @@
 <template>
   <div class="container ma-0 pa-0">
-    <h1>ip={{ ip }}</h1>
+    <h3>ip={{ ip }}</h3>
+    <h3>count={{ count }}</h3>
+    <h3>propcount={{ propcount }}</h3>
     <table class="table" border="1">
       <thead>
         <tr>
@@ -87,7 +89,13 @@
               v-on:click="greet"
             >0-{{index}}-{{item[columns[1]]}}</button>
           </td>
-          <td>1-{{index}}-{{item[columns[2]]}}</td>
+          <td>
+            <button
+              type="button"
+              class="clear-decoration"
+              v-on:click="dec"
+            >1-{{index}}-{{item[columns[2]]}}</button>
+          </td>
           <td>2-{{index}}-{{item[columns[3]]}}</td>
           <td>3-{{index}}-{{item[columns[4]]}}</td>
           <td>4-{{index}}-{{item[columns[5]]}}</td>
@@ -105,6 +113,10 @@ export default {
     ip: {
       type: String,
       default: '0.0.0.0',
+    },
+    propcount: {
+      type: Number,
+      default: 0,
     },
   },
   data() {
@@ -188,12 +200,23 @@ export default {
   },
   methods: {
     greet: function (event) {
-      alert('Hello ' + this.columns[0] + '!')
-      alert('Hello ' + this.baseItems[0][this.columns[0]] + '!')
+      //alert('Hello ' + this.columns[0] + '!')
+      //alert('Hello ' + this.baseItems[0][this.columns[0]] + '!')
+      // テスト用
+      this.$store.dispatch('counter/inc')
+
       // `event` は、ネイティブ DOM イベントです
       if (event) {
-        alert(event.target.tagName)
+        //alert(event.target.tagName)
       }
+    },
+    dec: function (event) {
+      this.$store.dispatch('counter/dec')
+    },
+  },
+  computed: {
+    count() {
+      return this.$store.state.counter.count
     },
   },
 }
