@@ -42,7 +42,7 @@ export default {
     // https://go.nuxtjs.dev/content
     '@nuxt/content',
     // add
-    '@nuxtjs/moment',
+    '@nuxtjs/dayjs',
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
