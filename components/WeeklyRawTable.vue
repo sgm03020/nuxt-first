@@ -7,7 +7,7 @@
       <h4>propcount={{ propcount }}</h4>
       <h4>now={{ now }}</h4>
       <h4>ymcount={{ ymcount }}</h4>
-      <h4>days[0]={{ days[0] }}</h4>
+      <!-- <h4>days[0]={{ days[0] }}</h4> -->
       <!-- <h4>days[0]={{ days[0] }}</h4> -->
     </template>
     <!-- days配列が空の時間は表示しない -->
@@ -26,7 +26,7 @@
           <th v-else v-bind:colspan="ymcount" /> -->
 
           <!-- パターン2 -->
-          <th v-bind:colspan="ymcount">
+          <th v-if="ymcount>1" v-bind:colspan="ymcount">
             <!-- パターン2-1 OK -->
             {{ days && days[0] ? days[0].yymm : undefined || undefined }}
             <!-- パターン2-2 OKだけどyymmがない場合はdays[0]が全部表示 -->
@@ -34,15 +34,30 @@
             <!-- パターン2-3 これはエラー-->
             <!-- {{ days[0].yymm}} -->
           </th>
+          <!-- セル1つ分しかない場合は月のみ -->
+          <th v-else v-bind:colspan="ymcount">
+            <!-- パターン2-1 OK -->
+            {{ days && days[0] ? days[0].mm : undefined || undefined }}
+          </th>
 
           <!-- <th colspan="4">2020年10月</th> -->
-          <th v-if="ymcount < 7" v-bind:colspan="7 - ymcount">
+          <th v-if="ymcount < 6" v-bind:colspan="7 - ymcount">
             {{
-              days && days[7 - ymcount + 1]
-                ? days[7 - ymcount + 1].yymm
+              days && days[ymcount]
+                ? days[ymcount].yymm
                 : undefined || undefined
             }}
           </th>
+          <th v-else-if="ymcount == 6" v-bind:colspan="7 - ymcount">
+            <!-- パターン2-1 OK -->
+            {{
+              days && days[ymcount]
+                ? days[ymcount].mm
+                : undefined || undefined
+            }}
+          </th>
+          
+
         </tr>
         <!-- ダミーtr -->
         <tr class="dummy-top">

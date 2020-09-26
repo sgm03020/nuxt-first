@@ -17,13 +17,13 @@
     <!-- v-model="now" -->
     <v-container>
       <v-row class="justify-space-between ma-0 px-2 py-0">
-        <v-btn icon color="indigo">
+        <v-btn icon color="indigo" @click="weeklyUpdate(sow, 0)">
           <v-icon>mdi-star</v-icon>
         </v-btn>
         <v-btn icon color="red" @click="debugMode">
           <v-icon>mdi-circle</v-icon>
         </v-btn>
-        <v-btn icon color="green">
+        <v-btn icon color="green" @click="weeklyUpdate(sow, 1)">
           <v-icon>mdi-star</v-icon>
         </v-btn>
       </v-row>
@@ -62,21 +62,13 @@ export default {
   },
   data() {
     return {
-      debug: true,
+      debug: false,
       ip: '',
       now: undefined,
-      yearMonthList: [],
+      sow: undefined,
       ymCount: 7,
       days: [],
-      // days: {
-      //   d1: '',
-      //   d2: '',
-      //   d3: '',
-      //   d4: '',
-      //   d5: '',
-      //   d6: '',
-      //   d7: '',
-      // },
+      yearMonthList: [], // 削除予定
     }
   },
   // 初期データを取得(fetch)
@@ -91,9 +83,10 @@ export default {
       weekStart: 1,
     })
 
-    const now = await this.$dayjs()
-    const sow = await this.$dayjs().startOf('week')
+    let now = await this.$dayjs()
+    let sow = await this.$dayjs().startOf('week')
     this.now = now.format('YYYY/MM/DD')
+    this.sow = sow
 
     let initDays = {
       d1: sow.format('YYYY/MM/DD/ddd'),
@@ -249,6 +242,68 @@ export default {
       this.debug = !this.debug
       console.log('Call debugMode ', this.debug)
       //this.$set(this.debug, 0, !this.debug)
+    },
+    // 週の並びを更新
+    // sow : Start Of Week - dayjsオブジェクト
+    weeklyUpdate(start, mode) {
+      let dayCount = 7
+
+      let ym1 = undefined
+      let ym2 = undefined
+      let cnt = 0
+
+      // length=0では更新しない
+      this.days.splice(0, this.days.length)
+
+      console.log('start=', start)
+      if (start == undefined) {
+        console.log('start is undefined return')
+        return
+      }
+
+      // 新たな週スタート日
+      let newStart = mode ? start.add(7, 'day') : start.subtract(7, 'day')
+
+      for (let i = 0; i < dayCount; i++) {
+        let item = i == 0 ? newStart : newStart.add(i, 'day')
+        //.format('YYYY/MM/DD')
+        //let item = sow.add(i, 'day').format('YYYY/MM/DD')
+        let year = item.year().toString() //sow.add(i, 'day').format('YYYY')
+        let month = (item.month() + 1).toString() //sow.add(i, 'day').format('MM')
+        let yymm = year + '年' + month + '月'
+        let mm = month + '月'
+        let day = item.format('D')
+        let dow = '(' + item.format('ddd') + ')'
+        let ym = item.format('YYYY/MM') || undefined
+        let cr = '#333'
+        if (item.day() == 0) {
+          cr = 'red'
+        } else if (item.day() == 6) {
+          cr = 'royalblue'
+        }
+        if (i == 0) {
+          ym1 = ym //item.substring(0, 7)
+          cnt++
+        } else if (ym1 && ym1 != ym) {
+          ym2 = ym //item.substring(0, 7)
+        } else if (ym1 && ym1 == ym) {
+          cnt++
+        }
+        console.log('cnt=', cnt)
+        //
+        // 配列の更新では画面に反映されない場合がある
+        // その場合は$setを利用する、Vueが監視出来る配列のメソッドを使う
+        // https://cloudpack.media/41984
+        // Vueが監視出来る配列のメソッドを使う
+        // push(), pop(), shift(), unshift(), splice(), sort(), reverse()
+        //
+        this.days.push({ item, year, month, yymm, mm, day, dow, ym, cr })
+      }
+      //console.log('ym1=', ym1, ' ym2=', ym2, ' cnt=', cnt)
+      console.log(this.days)
+
+      this.sow = newStart
+      this.ymCount = cnt
     },
   },
 }
