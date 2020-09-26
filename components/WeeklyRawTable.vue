@@ -12,7 +12,7 @@
     </template>
     <!-- days配列が空の時間は表示しない -->
     <!-- <table v-if="days && days.length>0" class="table" border="1"> -->
-    <table class="table" border="1">
+    <table class="table ma-0 pa-0" border="1">
       <thead>
         <tr>
           <!-- <th v-for="(column, index) in columns" :key="index">{{column}}</th> -->
@@ -26,7 +26,7 @@
           <th v-else v-bind:colspan="ymcount" /> -->
 
           <!-- パターン2 -->
-          <th v-if="ymcount>1" v-bind:colspan="ymcount">
+          <th v-if="ymcount > 1" v-bind:colspan="ymcount">
             <!-- パターン2-1 OK -->
             {{ days && days[0] ? days[0].yymm : undefined || undefined }}
             <!-- パターン2-2 OKだけどyymmがない場合はdays[0]が全部表示 -->
@@ -51,13 +51,9 @@
           <th v-else-if="ymcount == 6" v-bind:colspan="7 - ymcount">
             <!-- パターン2-1 OK -->
             {{
-              days && days[ymcount]
-                ? days[ymcount].mm
-                : undefined || undefined
+              days && days[ymcount] ? days[ymcount].mm : undefined || undefined
             }}
           </th>
-          
-
         </tr>
         <!-- ダミーtr -->
         <tr class="dummy-top">
@@ -105,7 +101,8 @@
           <th v-for="index in 7" :key="index" />
         </tr>
       </thead>
-      <tbody>
+
+      <tbody v-if="0">
         <tr v-for="(item, index) in baseItems" :key="index">
           <!-- <td v-for="(column, indexColumn) in columns" :key="indexColumn">{{item[column]}}</td> -->
           <td>{{ item[columns[0]] }}</td>
@@ -125,6 +122,40 @@
           <td>4-{{ index }}-{{ item[columns[5]] }}</td>
           <td>5-{{ index }}-{{ item[columns[6]] }}</td>
           <td>6-{{ index }}-{{ item[columns[7]] }}</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr v-for="(el, i) in timeList" :key="i">
+          <td>
+            {{ baseList[i] }}
+            <!-- <button type="button" class="clear-decoration" v-on:click="greet" >BTN</button> -->
+          </td>
+          <td v-for="(tm, j) in el" :key="j">
+            <!-- <button
+              :key="j"
+              :data-booking-time="tm"              
+              type="button"
+              style="width:100%;height:100%"
+              class="clear-decoration ma-0 pa-2"
+              v-on:click="greet"
+            >&nbsp;</button> -->
+            <v-card flat hover :data-booking-time="tm" :key="j" v-on:click="confirm(tm)">
+              <!-- <v-img
+                src="https://picsum.photos/id/11/500/300"
+                lazy-src="https://picsum.photos/id/11/10/6"
+                aspect-ratio="1"
+                class="grey lighten-2"
+                max-width="200"
+                max-height="200"
+              >
+              </v-img> -->
+              <!-- <span style="color:red;">◎</span> -->
+              ◎
+            </v-card>
+            <!-- <v-btn small text @click="greet" class="ma-0 pa-0">
+              <v-icon>mdi-circle</v-icon>
+            </v-btn> -->
+          </td>
         </tr>
       </tbody>
     </table>
@@ -160,6 +191,14 @@ export default {
       default: () => {},
     },
     days: {
+      type: Array,
+      default: () => {},
+    },
+    baseList: {
+      type: Array,
+      default: () => {},
+    },
+    timeList: {
       type: Array,
       default: () => {},
     },
@@ -258,6 +297,11 @@ export default {
     },
     dec: function (event) {
       this.$store.dispatch('counter/dec')
+    },
+    // 確認画面トリガー
+    confirm: function (bookingDateTime) {
+      console.log(bookingDateTime)
+      showDialog
     },
   },
   computed: {

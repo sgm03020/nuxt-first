@@ -4,7 +4,7 @@
 </template>
 -->
 <template>
-  <div class="container">
+  <div class="container ma-0 pa-0">
     <!-- <WeeklyBase /> -->
     <!-- <ItemForHour /> -->
     <!-- <WeeklyGoodTable /> -->
@@ -15,7 +15,7 @@
     <!-- <h3>{{this.$strLength('123')}}</h3> -->
     <!-- :now="now" -->
     <!-- v-model="now" -->
-    <v-container>
+    <v-container class="ma-0 pa-0">
       <v-row class="justify-space-between ma-0 px-2 py-0">
         <v-btn icon color="indigo" @click="weeklyUpdate(sow, 0)">
           <v-icon>mdi-star</v-icon>
@@ -35,7 +35,8 @@
       :now="now"
       :days="days"
       :ymcount="ymCount"
-      :ymlist="yearMonthList"
+      :baseList="baseList"
+      :timeList="bookingTimeList"
     />
   </div>
 </template>
@@ -67,7 +68,11 @@ export default {
       now: undefined,
       sow: undefined,
       ymCount: 7,
+      dayCount: 7,
       days: [],
+      baseHours: [],
+      baseList: [],
+      bookingTimeList: [],
       yearMonthList: [], // 削除予定
     }
   },
@@ -98,7 +103,7 @@ export default {
       d7: sow.add(6, 'day').format('YYYY/MM/DD/ddd'),
     }
     //let items = []
-    let dayCount = 7
+    let dayCount = this.dayCount
 
     let ym1 = undefined
     let ym2 = undefined
@@ -107,6 +112,7 @@ export default {
       let item = i == 0 ? sow : sow.add(i, 'day')
       //.format('YYYY/MM/DD')
       //let item = sow.add(i, 'day').format('YYYY/MM/DD')
+      //let yymmdd = item.format('YYYY/MM/DD')
       let year = item.year().toString() //sow.add(i, 'day').format('YYYY')
       let month = (item.month() + 1).toString() //sow.add(i, 'day').format('MM')
       let yymm = year + '年' + month + '月'
@@ -140,6 +146,41 @@ export default {
     console.log(this.days)
 
     this.ymCount = cnt
+
+    // baseHour取得
+    let baseHours = [9, 10, 11, 12]
+    // 分の単位はどこまでか
+    let basePeriod = 15
+    // これで予約可能時刻のリストを作る
+    // let baseList = []
+    // 予約日時
+    //let bookingTimeList = []
+
+    for (let i = 0; i < baseHours.length; i++) {
+      let line = []
+      let limit = Math.floor(60 / basePeriod)
+      let hour = baseHours[i]
+      let hm = ''
+      for (let j = 0; j < limit; j++) {
+        hm = hour.toString() + ':' + ('00' + j * basePeriod).slice(-2)
+        //console.log('hm=', hm)
+        this.baseList.push(hm)
+      }
+    }
+
+    for (let i = 0; i < this.baseList.length; i++) {
+      let datetime
+      let list1 = []
+      for (let j = 0; j < this.dayCount; j++) {
+        datetime = this.days[j].item.format('YYYY/MM/DD') + ' ' + this.baseList[i]
+        //console.log('datetime=', datetime)
+        list1.push(datetime)
+      }
+      this.bookingTimeList.push(list1)
+    }
+    
+    console.log(this.bookingTimeList)
+    console.log(this.bookingTimeList[0])
 
     //
     // OLD CODE
@@ -301,9 +342,52 @@ export default {
       }
       //console.log('ym1=', ym1, ' ym2=', ym2, ' cnt=', cnt)
       console.log(this.days)
-
       this.sow = newStart
       this.ymCount = cnt
+
+    // 
+    // 予約日時リスト作成 
+    // 　　
+    
+    // クリア
+    this.bookingTimeList.splice(0, this.bookingTimeList.length)
+
+    // baseHour取得
+    let baseHours = [9, 10, 11, 12]
+    // 分の単位はどこまでか
+    let basePeriod = 15
+    // 予約可能時刻のリストを作る
+    //let baseList = []
+    // 予約日時
+    //let bookingTimeList = []
+
+    for (let i = 0; i < baseHours.length; i++) {
+      let line = []
+      let limit = Math.floor(60 / basePeriod)
+      let hour = baseHours[i]
+      let hm = ''
+      for (let j = 0; j < limit; j++) {
+        hm = hour.toString() + ':' + ('00' + j * basePeriod).slice(-2)
+        //console.log('hm=', hm)
+        this.baseList.push(hm)
+      }
+    }
+
+    // 全ての時間割りを計算してリストにする
+    for (let i = 0; i < this.baseList.length; i++) {
+      let datetime
+      let list1 = []
+      for (let j = 0; j < this.dayCount; j++) {
+        datetime = this.days[j].item.format('YYYY/MM/DD') + ' ' + this.baseList[i]
+        //console.log('datetime=', datetime)
+        list1.push(datetime)
+      }
+      this.bookingTimeList.push(list1)
+    }
+    
+    //console.log(this.bookingTimeList)
+    console.log(this.bookingTimeList[0])
+
     },
   },
 }
