@@ -1,16 +1,47 @@
 <template>
   <div class="container ma-0 pa-0">
-    <h3>ip={{ ip }}</h3>
-    <h3>count={{ count }}</h3>
-    <h3>propcount={{ propcount }}</h3>
-    <h3>now={{ now }}</h3>
+    <h4>debug={{ debug }}</h4>
+    <template v-if="debug">
+      <h4>ip={{ ip }}</h4>
+      <h4>count={{ count }}</h4>
+      <h4>propcount={{ propcount }}</h4>
+      <h4>now={{ now }}</h4>
+      <h4>ymcount={{ ymcount }}</h4>
+      <!-- <h4>days[0]={{ days[0] }}</h4> -->
+    </template>
+    <!-- days配列が空の時間は表示しない -->
+    <!-- <table v-if="days && days.length>0" class="table" border="1"> -->
     <table class="table" border="1">
       <thead>
         <tr>
           <!-- <th v-for="(column, index) in columns" :key="index">{{column}}</th> -->
           <th rowspan="5">時刻</th>
-          <th colspan="3">2020年9月</th>
-          <th colspan="4">2020年10月</th>
+          <!-- <th colspan="3">2020年9月</th> -->
+
+          <!-- パターン1 -->
+          <!-- <th v-if="days[0]" v-bind:colspan="ymcount">
+            {{days[0].yymm}}
+          </th>
+          <th v-else v-bind:colspan="ymcount" /> -->
+
+          <!-- パターン2 -->
+          <th v-bind:colspan="ymcount">
+            <!-- パターン2-1 OK -->
+            {{ days && days[0] ? days[0].yymm : undefined || undefined }}
+            <!-- パターン2-2 OKだけどyymmがない場合はdays[0]が全部表示 -->
+            <!-- {{ days && days[0] && days[0].yymm}} -->
+            <!-- パターン2-3 これはエラー-->
+            <!-- {{ days[0].yymm}} -->
+          </th>
+
+          <!-- <th colspan="4">2020年10月</th> -->
+          <th v-if="ymcount < 7" v-bind:colspan="7 - ymcount">
+            {{
+              days && days[7 - ymcount + 1]
+                ? days[7 - ymcount + 1].yymm
+                : undefined || undefined
+            }}
+          </th>
         </tr>
         <!-- ダミーtr -->
         <tr class="dummy-top">
@@ -22,50 +53,73 @@
           <th></th>
           <th></th>
         </tr>
+        <!--
         <tr class="days">
+          <th v-for="(dy, index) in days" :key="index">
+            <span data-style="num">
+              {{ days && dy ? dy.day : undefined || undefined }}
+            </span>
+          </th>
+        </tr>
+        -->
+        <tr v-if="1" class="days">
           <th>
-            <span data-style="num">28</span>
+            <span data-style="num">
+              {{ days && days[0] ? days[0].day : undefined || undefined }}
+            </span>
           </th>
           <th>
-            <span data-style="num">29</span>
+            <span data-style="num">
+              {{ days && days[1] ? days[1].day : undefined || undefined }}
+            </span>
           </th>
           <th>
-            <span data-style="num">30</span>
+            <span data-style="num">
+              {{ days && days[2] ? days[2].day : undefined || undefined }}
+            </span>
           </th>
           <th>
-            <span data-style="num">1</span>
+            <span data-style="num">
+              {{ days && days[3] ? days[3].day : undefined || undefined }}
+            </span>
           </th>
           <th>
-            <span data-style="num">2</span>
+            <span data-style="num">
+              {{ days && days[4] ? days[4].day : undefined || undefined }}
+            </span>
           </th>
           <th>
-            <span data-style="num">3</span>
+            <span data-style="num">
+              {{ days && days[5] ? days[5].day : undefined || undefined }}
+            </span>
           </th>
           <th>
-            <span data-style="num">4</span>
+            <span data-style="num">
+              {{ days && days[6] ? days[6].day : undefined || undefined }}
+            </span>
           </th>
         </tr>
         <tr class="dow">
           <th>
-            <span data-style="dow">(月)</span>
+            <!-- <span data-style="dow">{{ days[0].dow }}</span> -->
           </th>
           <th>
-            <span data-style="dow">(火)</span>
+            <!-- <span data-style="dow">{{ days[1].dow }}</span> -->
           </th>
           <th>
-            <span data-style="dow">(水)</span>
+            <!-- <span data-style="dow">{{ days[2].dow }}</span> -->
           </th>
           <th>
-            <span data-style="dow">(木)</span>
+            <!-- <span data-style="dow">{{ days[3].dow }}</span> -->
           </th>
           <th>
-            <span data-style="dow">(金)</span>
+            <!-- <span data-style="dow">{{ days[4].dow }}</span> -->
           </th>
           <th>
-            <span data-style="dow">(土)</span>
+            <!-- <span data-style="dow">{{ days[5].dow }}</span> -->
           </th>
           <th>
-            <span data-style="dow">(日)</span>
+            <!-- <span data-style="dow">{{ days[6].dow }}</span> -->
           </th>
         </tr>
         <tr class="dummy-bottom">
@@ -81,27 +135,23 @@
       <tbody>
         <tr v-for="(item, index) in baseItems" :key="index">
           <!-- <td v-for="(column, indexColumn) in columns" :key="indexColumn">{{item[column]}}</td> -->
-          <td>{{item[columns[0]]}}</td>
+          <td>{{ item[columns[0]] }}</td>
           <td>
             <!-- <v-btn block depressed>0-{{index}}-{{item[columns[1]]}}</v-btn> -->
-            <button
-              type="button"
-              class="clear-decoration"
-              v-on:click="greet"
-            >0-{{index}}-{{item[columns[1]]}}</button>
+            <button type="button" class="clear-decoration" v-on:click="greet">
+              0-{{ index }}-{{ item[columns[1]] }}
+            </button>
           </td>
           <td>
-            <button
-              type="button"
-              class="clear-decoration"
-              v-on:click="dec"
-            >1-{{index}}-{{item[columns[2]]}}</button>
+            <button type="button" class="clear-decoration" v-on:click="dec">
+              1-{{ index }}-{{ item[columns[2]] }}
+            </button>
           </td>
-          <td>2-{{index}}-{{item[columns[3]]}}</td>
-          <td>3-{{index}}-{{item[columns[4]]}}</td>
-          <td>4-{{index}}-{{item[columns[5]]}}</td>
-          <td>5-{{index}}-{{item[columns[6]]}}</td>
-          <td>6-{{index}}-{{item[columns[7]]}}</td>
+          <td>2-{{ index }}-{{ item[columns[3]] }}</td>
+          <td>3-{{ index }}-{{ item[columns[4]] }}</td>
+          <td>4-{{ index }}-{{ item[columns[5]] }}</td>
+          <td>5-{{ index }}-{{ item[columns[6]] }}</td>
+          <td>6-{{ index }}-{{ item[columns[7]] }}</td>
         </tr>
       </tbody>
     </table>
@@ -111,9 +161,13 @@
 <script>
 export default {
   props: {
+    debug: {
+      type: Boolean,
+      default: false,
+    },
     ip: {
       type: String,
-      default: '0.0.0.0',
+      default: '',
     },
     propcount: {
       type: Number,
@@ -121,11 +175,25 @@ export default {
     },
     now: {
       type: String,
-      default: null,
-    }
+      default: undefined,
+      //default: () => (null),
+    },
+    ymcount: {
+      type: Number,
+      default: 7,
+    },
+    ymlist: {
+      type: Array,
+      default: () => {},
+    },
+    days: {
+      type: Array,
+      default: () => {},
+    },
   },
   data() {
     return {
+      dowArray: ['(月)', '(火)', '(水)', '(木)', '(金)', '(土)', '(日)'],
       baseItems: [
         {
           hour: '9:00',

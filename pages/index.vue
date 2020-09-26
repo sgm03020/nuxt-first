@@ -69,12 +69,13 @@
 <script>
 import Logo from '~/components/Logo.vue'
 import VuetifyLogo from '~/components/VuetifyLogo.vue'
-
+import Mixin from '../mixins/mixin'
 export default {
   components: {
     Logo,
     VuetifyLogo,
   },
+  mixins: [Mixin],
 }
 </script>
 
