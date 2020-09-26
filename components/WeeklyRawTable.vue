@@ -7,6 +7,7 @@
       <h4>propcount={{ propcount }}</h4>
       <h4>now={{ now }}</h4>
       <h4>ymcount={{ ymcount }}</h4>
+      <h4>days[0]={{ days[0] }}</h4>
       <!-- <h4>days[0]={{ days[0] }}</h4> -->
     </template>
     <!-- days配列が空の時間は表示しない -->
@@ -45,91 +46,48 @@
         </tr>
         <!-- ダミーtr -->
         <tr class="dummy-top">
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
+          <th v-for="index in 7" :key="index" />
         </tr>
-        <!--
+
         <tr class="days">
-          <th v-for="(dy, index) in days" :key="index">
-            <span data-style="num">
-              {{ days && dy ? dy.day : undefined || undefined }}
-            </span>
-          </th>
-        </tr>
-        -->
-        <tr v-if="1" class="days">
-          <th>
-            <span data-style="num">
-              {{ days && days[0] ? days[0].day : undefined || undefined }}
-            </span>
-          </th>
-          <th>
-            <span data-style="num">
-              {{ days && days[1] ? days[1].day : undefined || undefined }}
-            </span>
-          </th>
-          <th>
-            <span data-style="num">
-              {{ days && days[2] ? days[2].day : undefined || undefined }}
-            </span>
-          </th>
-          <th>
-            <span data-style="num">
-              {{ days && days[3] ? days[3].day : undefined || undefined }}
-            </span>
-          </th>
-          <th>
-            <span data-style="num">
-              {{ days && days[4] ? days[4].day : undefined || undefined }}
-            </span>
-          </th>
-          <th>
-            <span data-style="num">
-              {{ days && days[5] ? days[5].day : undefined || undefined }}
-            </span>
-          </th>
-          <th>
-            <span data-style="num">
-              {{ days && days[6] ? days[6].day : undefined || undefined }}
-            </span>
+          <!-- <th v-for="(dy, index) in days" :key="index"> -->
+          <th v-for="index in 7" :key="index">
+            <template v-if="days && days[index - 1]">
+              <span
+                data-style="num"
+                v-bind:style="{ color: days[index - 1].cr }"
+              >
+                {{
+                  days && days[index - 1]
+                    ? days[index - 1].day
+                    : undefined || undefined
+                }}
+
+                <!-- {{ days[index - 1].cr }} -->
+              </span>
+            </template>
           </th>
         </tr>
         <tr class="dow">
-          <th>
-            <!-- <span data-style="dow">{{ days[0].dow }}</span> -->
-          </th>
-          <th>
-            <!-- <span data-style="dow">{{ days[1].dow }}</span> -->
-          </th>
-          <th>
-            <!-- <span data-style="dow">{{ days[2].dow }}</span> -->
-          </th>
-          <th>
-            <!-- <span data-style="dow">{{ days[3].dow }}</span> -->
-          </th>
-          <th>
-            <!-- <span data-style="dow">{{ days[4].dow }}</span> -->
-          </th>
-          <th>
-            <!-- <span data-style="dow">{{ days[5].dow }}</span> -->
-          </th>
-          <th>
-            <!-- <span data-style="dow">{{ days[6].dow }}</span> -->
+          <th v-for="index in 7" :key="index">
+            <!-- 要素が揃う場合のみ -->
+            <template v-if="days && days[index - 1]">
+              <span
+                data-style="dow"
+                v-bind:style="{ color: days[index - 1].cr }"
+              >
+                {{
+                  days && days[index - 1]
+                    ? days[index - 1].dow
+                    : undefined || undefined
+                }}
+              </span>
+            </template>
           </th>
         </tr>
+        <!-- 縦余白の調節のためのダミー行 -->
         <tr class="dummy-bottom">
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
+          <th v-for="index in 7" :key="index" />
         </tr>
       </thead>
       <tbody>

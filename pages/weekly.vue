@@ -48,6 +48,9 @@ import WeeklyRawTable from '@/components/WeeklyRawTable'
 import WeeklyTest from '@/components/WeeklyTest'
 // import Mixin from '../mixins/mixin.js'
 
+// ロケール日本で月曜スタートになっていないために使う
+import updateLocale from 'dayjs/plugin/updateLocale'
+
 export default {
   // mixins: [Mixin],
   components: {
@@ -80,6 +83,14 @@ export default {
   async fetch() {
     const { ip } = this.$axios.$get('http://icanhazip.com')
     this.ip = '0'
+
+    // 日本ロケールで月曜スタートにするために以下が必要
+    // (デフォルトでdayjsのesm/locale/ja.jsにweekStartが付加されていないため)
+    this.$dayjs.extend(updateLocale)
+    this.$dayjs.updateLocale('ja', {
+      weekStart: 1,
+    })
+
     const now = await this.$dayjs()
     const sow = await this.$dayjs().startOf('week')
     this.now = now.format('YYYY/MM/DD')
@@ -100,18 +111,26 @@ export default {
     let ym2 = undefined
     let cnt = 0
     for (let i = 0; i < dayCount; i++) {
-      let item = sow.add(i, 'day').format('YYYY/MM/DD')
-      let year = sow.year().toString() //sow.add(i, 'day').format('YYYY')
-      let month = (sow.month() + 1).toString() //sow.add(i, 'day').format('MM')
+      let item = i == 0 ? sow : sow.add(i, 'day')
+      //.format('YYYY/MM/DD')
+      //let item = sow.add(i, 'day').format('YYYY/MM/DD')
+      let year = item.year().toString() //sow.add(i, 'day').format('YYYY')
+      let month = (item.month() + 1).toString() //sow.add(i, 'day').format('MM')
       let yymm = year + '年' + month + '月'
-      let day = sow.add(i, 'day').format('DD')
-      let dow = '(' + sow.add(i, 'day').format('ddd') + ')'
-      let ym = item.substring(0, 7) || undefined
+      let day = item.format('DD')
+      let dow = '(' + item.format('ddd') + ')'
+      let ym = item.format('YYYY/MM') || undefined
+      let cr = '#333'
+      if (item.day() == 0) {
+        cr = 'red'
+      } else if (item.day() == 6) {
+        cr = 'royalblue'
+      }
       if (i == 0) {
-        ym1 = item.substring(0, 7)
+        ym1 = ym //item.substring(0, 7)
         cnt++
       } else if (ym1 && ym1 != ym) {
-        ym2 = item.substring(0, 7)
+        ym2 = ym //item.substring(0, 7)
       } else if (ym1 && ym1 == ym) {
         cnt++
       }
@@ -122,7 +141,7 @@ export default {
       // Vueが監視出来る配列のメソッドを使う
       // push(), pop(), shift(), unshift(), splice(), sort(), reverse()
       //
-      this.days.push({ item, year, month, yymm, day, dow })
+      this.days.push({ item, year, month, yymm, day, dow, ym, cr })
     }
     //console.log('ym1=', ym1, ' ym2=', ym2, ' cnt=', cnt)
     console.log(this.days)
