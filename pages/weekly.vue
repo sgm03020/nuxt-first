@@ -408,6 +408,8 @@ export default {
       //        2020/09/22 9:00
       // ここで担当者情報を付加して遷移
       console.log(event); 
+      this.$router.push('/confirm')
+      
     }
   },
 }
