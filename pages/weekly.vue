@@ -3,6 +3,8 @@
   <WeeklyBase />
 </template>
 -->
+
+<!-- 1. 週間予約カレンダー -->
 <template>
   <div class="container ma-0 pa-0">
     <!-- <WeeklyBase /> -->
@@ -15,7 +17,7 @@
     <!-- <h3>{{this.$strLength('123')}}</h3> -->
     <!-- :now="now" -->
     <!-- v-model="now" -->
-    <v-container class="ma-0 pa-0">
+    <v-container v-if="!isConfirm" class="ma-0 pa-0">
       <v-row class="justify-space-between ma-0 px-2 py-0">
         <v-btn icon color="indigo" @click="weeklyUpdate(sow, 0)">
           <v-icon>mdi-star</v-icon>
@@ -29,6 +31,7 @@
       </v-row>
     </v-container>
     <WeeklyRawTable
+      v-if="!isConfirm"
       :debug="debug"
       :ip="ip"
       :propcount="count"
@@ -39,6 +42,16 @@
       :timeList="bookingTimeList"
       @select="doConfirm($event)"
     />
+
+    <!-- 2. 確認画面用 -->
+    <v-container v-if="isConfirm">
+      <h2>確認画面</h2>
+      <v-row class="justify-space-between ma-2 pa-2">
+        <v-btn @click="isConfirm = !isConfirm">前の画面</v-btn>
+        <nuxt-link to="/">Topへ戻る</nuxt-link>
+        <button class="btn btn-next">次</button>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -55,6 +68,10 @@ import updateLocale from 'dayjs/plugin/updateLocale'
 
 export default {
   // mixins: [Mixin],
+  // transition: {
+  //   name: 'test',
+  //   mode: 'out-in',
+  // },
   components: {
     WeeklyBase,
     ItemForHour,
@@ -64,7 +81,9 @@ export default {
   },
   data() {
     return {
+      show: true,
       debug: false,
+      isConfirm: false,
       ip: '',
       now: undefined,
       sow: undefined,
@@ -403,14 +422,33 @@ export default {
       //console.log(this.bookingTimeList)
       console.log(this.bookingTimeList[0])
     },
-    doConfirm(event){
+    doConfirm(event) {
       // event: 選択日時(文字列)
       //        2020/09/22 9:00
       // ここで担当者情報を付加して遷移
-      console.log(event); 
-      this.$router.push('/confirm')
-      
-    }
+      console.log(event)
+      // 遷移の場合
+      //this.$router.push('/confirm')
+      // 遷移させない場合
+      this.isConfirm = true
+    },
   },
 }
 </script>
+
+<style lang="scss">
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+.fade2-enter-active,
+.fade2-leave-active {
+  transition: opacity 0.5s;
+}
+.fade2-enter, .fade2-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+</style>
