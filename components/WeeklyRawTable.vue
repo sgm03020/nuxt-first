@@ -139,7 +139,7 @@
               class="clear-decoration ma-0 pa-2"
               v-on:click="greet"
             >&nbsp;</button> -->
-            <v-card flat hover :data-booking-time="tm" :key="j" v-on:click="confirm(tm)">
+            <v-card flat hover :data-booking-time="tm" :key="j" @click="select(tm)">
               <!-- <v-img
                 src="https://picsum.photos/id/11/500/300"
                 lazy-src="https://picsum.photos/id/11/10/6"
@@ -299,9 +299,10 @@ export default {
       this.$store.dispatch('counter/dec')
     },
     // 確認画面トリガー
-    confirm: function (bookingDateTime) {
-      console.log(bookingDateTime)
-      showDialog
+    select: function (tm) {
+      console.log('selectedDateTime=', tm)
+      //this.$emit('childevent', tm)
+      this.$emit('select', tm)
     },
   },
   computed: {

@@ -37,6 +37,7 @@
       :ymcount="ymCount"
       :baseList="baseList"
       :timeList="bookingTimeList"
+      @select="doConfirm($event)"
     />
   </div>
 </template>
@@ -172,13 +173,14 @@ export default {
       let datetime
       let list1 = []
       for (let j = 0; j < this.dayCount; j++) {
-        datetime = this.days[j].item.format('YYYY/MM/DD') + ' ' + this.baseList[i]
+        datetime =
+          this.days[j].item.format('YYYY/MM/DD') + ' ' + this.baseList[i]
         //console.log('datetime=', datetime)
         list1.push(datetime)
       }
       this.bookingTimeList.push(list1)
     }
-    
+
     console.log(this.bookingTimeList)
     console.log(this.bookingTimeList[0])
 
@@ -293,12 +295,23 @@ export default {
       let ym2 = undefined
       let cnt = 0
 
-      // length=0では更新しない
+      // 配列を空にする
+      // days.length=0では更新しない
       this.days.splice(0, this.days.length)
+      this.bookingTimeList.splice(0, this.bookingTimeList.length)
+      this.baseList.splice(0, this.baseList.length)
 
-      console.log('start=', start)
+      // TODO
+      // 今の数にあった空の配列に置き換えるのはどうか
+      // -> 値がないのでWeeklyRawTable.vueでエラーになるから
+      // 空の場合の処理をWeeklyRawTable.vueで新たに作る必要がある
+      //
+
+      // console.log('bookingTimeList.length=', this.bookingTimeList.length)
+      // console.log('bookingTimeList=', this.bookingTimeList)
+
       if (start == undefined) {
-        console.log('start is undefined return')
+        //console.log('start is undefined return')
         return
       }
 
@@ -345,50 +358,57 @@ export default {
       this.sow = newStart
       this.ymCount = cnt
 
-    // 
-    // 予約日時リスト作成 
-    // 　　
-    
-    // クリア
-    this.bookingTimeList.splice(0, this.bookingTimeList.length)
+      //
+      // 予約日時リスト作成
+      //
 
-    // baseHour取得
-    let baseHours = [9, 10, 11, 12]
-    // 分の単位はどこまでか
-    let basePeriod = 15
-    // 予約可能時刻のリストを作る
-    //let baseList = []
-    // 予約日時
-    //let bookingTimeList = []
+      // クリア
+      //this.bookingTimeList.splice(0, this.bookingTimeList.length)
 
-    for (let i = 0; i < baseHours.length; i++) {
-      let line = []
-      let limit = Math.floor(60 / basePeriod)
-      let hour = baseHours[i]
-      let hm = ''
-      for (let j = 0; j < limit; j++) {
-        hm = hour.toString() + ':' + ('00' + j * basePeriod).slice(-2)
-        //console.log('hm=', hm)
-        this.baseList.push(hm)
+      // baseHour取得
+      let baseHours = [9, 10, 11, 12]
+      // 分の単位はどこまでか
+      let basePeriod = 15
+      // 予約可能時刻のリストを作る
+      //let baseList = []
+      // 予約日時
+      //let bookingTimeList = []
+
+      for (let i = 0; i < baseHours.length; i++) {
+        let line = []
+        let limit = Math.floor(60 / basePeriod)
+        let hour = baseHours[i]
+        let hm = ''
+        for (let j = 0; j < limit; j++) {
+          hm = hour.toString() + ':' + ('00' + j * basePeriod).slice(-2)
+          //console.log('hm=', hm)
+          this.baseList.push(hm)
+        }
       }
-    }
 
-    // 全ての時間割りを計算してリストにする
-    for (let i = 0; i < this.baseList.length; i++) {
-      let datetime
-      let list1 = []
-      for (let j = 0; j < this.dayCount; j++) {
-        datetime = this.days[j].item.format('YYYY/MM/DD') + ' ' + this.baseList[i]
-        //console.log('datetime=', datetime)
-        list1.push(datetime)
+      // 全ての時間割りを計算してリストにする
+      console.log('this.baseList.length=', this.baseList.length)
+      for (let i = 0; i < this.baseList.length; i++) {
+        let datetime
+        let list1 = []
+        for (let j = 0; j < this.dayCount; j++) {
+          datetime =
+            this.days[j].item.format('YYYY/MM/DD') + ' ' + this.baseList[i]
+          //console.log('datetime=', datetime)
+          list1.push(datetime)
+        }
+        this.bookingTimeList.push(list1)
       }
-      this.bookingTimeList.push(list1)
-    }
-    
-    //console.log(this.bookingTimeList)
-    console.log(this.bookingTimeList[0])
 
+      //console.log(this.bookingTimeList)
+      console.log(this.bookingTimeList[0])
     },
+    doConfirm(event){
+      // event: 選択日時(文字列)
+      //        2020/09/22 9:00
+      // ここで担当者情報を付加して遷移
+      console.log(event); 
+    }
   },
 }
 </script>
