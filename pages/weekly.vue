@@ -52,34 +52,40 @@
     <modal
       name="confirm-content"
       width="98%"
+      height="auto"
+      :minHeight="200"
+      :maxHeight="600"
       :delay="500"
       :clickToClose="false"
     >
-      <p>モーダルウィンドウで表示されるコンテンツ</p>
+      <h2 class="ma-2 pa-2">予約依頼のご確認</h2>
+      <p></p>
       <!-- v-if="!isConfirm"  -->
       <v-container v-if="isConfirm" class="ma-2 pa-2">
-        <h2>確認画面</h2>
         <v-row justify="center" align="center">
           <v-card>
-            <v-card-title>
-              <!-- {{ this.bookingTime&&this.bookingTime.substring(0,4)||'' }}年 -->
-              <!-- {{ this.bookingTime&&this.bookingTime.substring(5,7)||'' }}月 -->
-              <!-- {{ this.bookingTime&&this.bookingTime.substring(8,10)||'' }}日 -->
-              <!-- &nbsp; -->
-              <!-- {{ this.bookingTime&&this.bookingTime.substring(11,this.bookingTime.length)||'' }} -->
+            <v-row class="mx-0">
+              <v-card-title class="mt-2 mx-6 mb-2 pa-0">
+                担当：
+              </v-card-title>
+            </v-row>
+            <v-card-title class="mt-3 mb-0 mx-6 pa-0">
               {{
                 this.$dayjs(this.bookingTime.substring(0, 10)).format(
-                  'YYYY年 M月 D日 (ddd)'
+                  'YYYY年 M月 D日　(ddd)'
                 )
               }}
-
-              {{
-                this.$dayjs(this.bookingTime).format('YYYY年 M月 D日 (ddd) LT')
-              }}
             </v-card-title>
+            <!-- justify-center -->
+            <v-row class="mx-0">
+              <v-spacer />
+              <v-card-title class="mt-2 mx-6 mb-2 pa-0">
+                {{ this.$dayjs(this.bookingTime).format(' h時 mm分') }}
+              </v-card-title>
+            </v-row>
           </v-card>
         </v-row>
-        <v-row class="justify-space-between ma-2 pa-2">
+        <v-row class="justify-space-between mx-2 pa-2">
           <!-- <v-btn @click="isConfirm = !isConfirm">前の画面</v-btn> -->
           <v-btn v-on:click="hide">閉じる</v-btn>
           <nuxt-link to="/">Topへ戻る</nuxt-link>
@@ -161,134 +167,6 @@ export default {
     this.sow = sow
 
     this.weeklyUpdate(sow, undefined)
-
-    /*
-    let dayCount = this.dayCount
-
-    let ym1 = undefined
-    let ym2 = undefined
-    let cnt = 0
-    for (let i = 0; i < dayCount; i++) {
-      let item = i == 0 ? sow : sow.add(i, 'day')
-      //.format('YYYY/MM/DD')
-      //let item = sow.add(i, 'day').format('YYYY/MM/DD')
-      //let yymmdd = item.format('YYYY/MM/DD')
-      let year = item.year().toString() //sow.add(i, 'day').format('YYYY')
-      let month = (item.month() + 1).toString() //sow.add(i, 'day').format('MM')
-      let yymm = year + '年' + month + '月'
-      let day = item.format('D')
-      let dow = '(' + item.format('ddd') + ')'
-      let ym = item.format('YYYY/MM') || undefined
-      let cr = '#333'
-      if (item.day() == 0) {
-        cr = 'red'
-      } else if (item.day() == 6) {
-        cr = 'royalblue'
-      }
-      if (i == 0) {
-        ym1 = ym //item.substring(0, 7)
-        cnt++
-      } else if (ym1 && ym1 != ym) {
-        ym2 = ym //item.substring(0, 7)
-      } else if (ym1 && ym1 == ym) {
-        cnt++
-      }
-      //
-      // 配列の更新では画面に反映されない場合がある
-      // その場合は$setを利用する、Vueが監視出来る配列のメソッドを使う
-      // https://cloudpack.media/41984
-      // Vueが監視出来る配列のメソッドを使う
-      // push(), pop(), shift(), unshift(), splice(), sort(), reverse()
-      //
-      this.days.push({ item, year, month, yymm, day, dow, ym, cr })
-    }
-
-    this.ymCount = cnt
-
-    // baseHour取得
-    let baseHours = [9, 10, 11, 12]
-    // 分の単位はどこまでか
-    let basePeriod = 15
-    // これで予約可能時刻のリストを作る
-    // let baseList = []
-    // 予約日時
-    //let bookingTimeList = []
-
-    for (let i = 0; i < baseHours.length; i++) {
-      let line = []
-      let limit = Math.floor(60 / basePeriod)
-      let hour = ('00' + baseHours[i].toString()).slice(-2)
-      let hm = ''
-      for (let j = 0; j < limit; j++) {
-        // 時刻 09:05:00
-        hm = hour + ':' + ('00' + j * basePeriod).slice(-2) + ':' + '00'
-        //console.log('hm=', hm)
-        this.baseList.push(hm)
-      }
-    }
-
-    for (let i = 0; i < this.baseList.length; i++) {
-      let datetime
-      let list1 = []
-      for (let j = 0; j < this.dayCount; j++) {
-        datetime =
-          this.days[j].item.format('YYYY/MM/DD') + 'T' + this.baseList[i]
-        console.log('datetime=', datetime)
-        // console.log('this.baseList[i]=', this.baseList[i])
-        list1.push(datetime)
-      }
-      this.bookingTimeList.push(list1)
-    }
-
-    //console.log(this.bookingTimeList)
-    //console.log(this.bookingTimeList[0])
-    */
-
-    //
-    // OLD CODE
-    //
-    /*
-    if (false) {
-      // daysセット
-      this.days = initDays
-
-      // 同じ月のデータがいくつあるか
-      let first = initDays.d1.slice(0, 7)
-      let array = []
-      for (let i in initDays) {
-        array.push(initDays[i].slice(0, 7))
-      }
-
-      // 最初の年/月に一致する個数
-      let n = array.filter((item) => {
-        return item == first
-      }).length
-
-      // ymCountセット
-      this.ymCount = 4
-
-      // 重複削除(注意IE11だとダメかも)
-      let orderedArray = Array.from(new Set(array))
-
-      // ★テスト用に追加
-      orderedArray.push('2020/10')
-      // yearMonthListセット
-      this.yearMonthList = orderedArray
-
-      //let array = Object.values(initDays)
-      console.log(
-        first,
-        ':',
-        array,
-        ':',
-        n,
-        ' orderdArray=',
-        orderedArray,
-        ' size=',
-        orderedArray.length
-      )
-    }
-    */
   },
   //fetchOnServer: false,
   // 初期データを取得
@@ -347,7 +225,10 @@ export default {
       //this.$set(this.debug, 0, !this.debug)
     },
     // 週の並びを更新
-    // sow : Start Of Week - dayjsオブジェクト
+    // start : Start Of Week - dayjsオブジェクト
+    // mode  : 0 - 前の7日
+    //         1 - 次の7日
+    //         undefined - 現時点の週の最初の月曜
     weeklyUpdate(start, mode) {
       let dayCount = 7
 
