@@ -12,48 +12,92 @@
     <!-- <WeeklyGoodTable /> -->
     <!-- <WeeklyTest /> -->
     <h3>weekly page count: {{ count }}</h3>
+    <h4>isConfirm:{{ this.isConfirm }}</h4>
     <!-- <h3>initDays.d1: {{initDays.d1}}</h3> -->
     <!-- <h3>{{initDays.d1.format('YYYY/MM/DD')}}</h3> -->
     <!-- <h3>{{this.$strLength('123')}}</h3> -->
     <!-- :now="now" -->
     <!-- v-model="now" -->
-    <v-container v-if="!isConfirm" class="ma-0 pa-0">
-      <v-row class="justify-space-between ma-0 px-2 py-0">
-        <v-btn icon color="indigo" @click="weeklyUpdate(sow, 0)">
-          <v-icon>mdi-star</v-icon>
-        </v-btn>
-        <v-btn icon color="red" @click="debugMode">
-          <v-icon>mdi-circle</v-icon>
-        </v-btn>
-        <v-btn icon color="green" @click="weeklyUpdate(sow, 1)">
-          <v-icon>mdi-star</v-icon>
-        </v-btn>
-      </v-row>
-    </v-container>
-    <WeeklyRawTable
-      v-if="!isConfirm"
-      :debug="debug"
-      :ip="ip"
-      :propcount="count"
-      :now="now"
-      :days="days"
-      :ymcount="ymCount"
-      :baseList="baseList"
-      :timeList="bookingTimeList"
-      @select="doConfirm($event)"
-    />
-
+    <!-- v-if="!isConfirm"  -->
+    <transition name="fade" mode="out-in">
+      <div v-if="!isConfirm">
+        <v-container class="ma-0 pa-0">
+          <v-row class="justify-space-between ma-0 px-2 py-0">
+            <v-btn icon color="indigo" @click="weeklyUpdate(sow, 0)">
+              <v-icon>mdi-star</v-icon>
+            </v-btn>
+            <v-btn icon color="red" @click="debugMode">
+              <v-icon>mdi-circle</v-icon>
+            </v-btn>
+            <v-btn icon color="green" @click="weeklyUpdate(sow, 1)">
+              <v-icon>mdi-star</v-icon>
+            </v-btn>
+          </v-row>
+        </v-container>
+        <!-- v-if="!isConfirm" -->
+        <WeeklyRawTable
+          :debug="debug"
+          :ip="ip"
+          :propcount="count"
+          :now="now"
+          :days="days"
+          :ymcount="ymCount"
+          :baseList="baseList"
+          :timeList="bookingTimeList"
+          @select="doConfirm($event)"
+        />
+      </div>
+    </transition>
     <!-- 2. 確認画面用 -->
-    <v-container v-if="isConfirm">
-      <h2>確認画面</h2>
-      <v-row class="justify-space-between ma-2 pa-2">
-        <v-btn @click="isConfirm = !isConfirm">前の画面</v-btn>
-        <nuxt-link to="/">Topへ戻る</nuxt-link>
-        <button class="btn btn-next">次</button>
-      </v-row>
-    </v-container>
+    <modal
+      name="confirm-content"
+      width="98%"
+      :delay="500"
+      :clickToClose="false"
+    >
+      <p>モーダルウィンドウで表示されるコンテンツ</p>
+      <!-- v-if="!isConfirm"  -->
+      <v-container v-if="isConfirm" class="ma-2 pa-2">
+        <h2>確認画面</h2>
+        <v-row justify="center" align="center">
+          <v-card>
+            <v-card-title>
+              <!-- {{ this.bookingTime&&this.bookingTime.substring(0,4)||'' }}年 -->
+              <!-- {{ this.bookingTime&&this.bookingTime.substring(5,7)||'' }}月 -->
+              <!-- {{ this.bookingTime&&this.bookingTime.substring(8,10)||'' }}日 -->
+              <!-- &nbsp; -->
+              <!-- {{ this.bookingTime&&this.bookingTime.substring(11,this.bookingTime.length)||'' }} -->
+              {{
+                this.$dayjs(this.bookingTime.substring(0, 10)).format(
+                  'YYYY年 M月 D日 (ddd)'
+                )
+              }}
+
+              {{
+                this.$dayjs(this.bookingTime).format('YYYY年 M月 D日 (ddd) LT')
+              }}
+            </v-card-title>
+          </v-card>
+        </v-row>
+        <v-row class="justify-space-between ma-2 pa-2">
+          <!-- <v-btn @click="isConfirm = !isConfirm">前の画面</v-btn> -->
+          <v-btn v-on:click="hide">閉じる</v-btn>
+          <nuxt-link to="/">Topへ戻る</nuxt-link>
+        </v-row>
+      </v-container>
+    </modal>
+
+    <!-- https://euvl.github.io/vue-js-modal/Properties.html#properties-2 -->
+    <v-dialog
+      width="100%"
+      minHeight="800"
+      :adaptive="true"
+      :clickToClose="false"
+    />
   </div>
 </template>
+
+
 
 <script>
 import WeeklyBase from '@/components/WeeklyBase'
@@ -84,6 +128,9 @@ export default {
       show: true,
       debug: false,
       isConfirm: false,
+      bookingDateTime: undefined, //未使用
+      bookingDate: undefined, //未使用
+      bookingTime: undefined,
       ip: '',
       now: undefined,
       sow: undefined,
@@ -113,16 +160,9 @@ export default {
     this.now = now.format('YYYY/MM/DD')
     this.sow = sow
 
-    let initDays = {
-      d1: sow.format('YYYY/MM/DD/ddd'),
-      d2: sow.add(1, 'day').format('YYYY/MM/DD/ddd'),
-      d3: sow.add(2, 'day').format('YYYY/MM/DD/ddd'),
-      d4: sow.add(3, 'day').format('YYYY/MM/DD/ddd'),
-      d5: sow.add(4, 'day').format('YYYY/MM/DD/ddd'),
-      d6: sow.add(5, 'day').format('YYYY/MM/DD/ddd'),
-      d7: sow.add(6, 'day').format('YYYY/MM/DD/ddd'),
-    }
-    //let items = []
+    this.weeklyUpdate(sow, undefined)
+
+    /*
     let dayCount = this.dayCount
 
     let ym1 = undefined
@@ -136,7 +176,7 @@ export default {
       let year = item.year().toString() //sow.add(i, 'day').format('YYYY')
       let month = (item.month() + 1).toString() //sow.add(i, 'day').format('MM')
       let yymm = year + '年' + month + '月'
-      let day = item.format('DD')
+      let day = item.format('D')
       let dow = '(' + item.format('ddd') + ')'
       let ym = item.format('YYYY/MM') || undefined
       let cr = '#333'
@@ -162,8 +202,6 @@ export default {
       //
       this.days.push({ item, year, month, yymm, day, dow, ym, cr })
     }
-    //console.log('ym1=', ym1, ' ym2=', ym2, ' cnt=', cnt)
-    console.log(this.days)
 
     this.ymCount = cnt
 
@@ -179,10 +217,11 @@ export default {
     for (let i = 0; i < baseHours.length; i++) {
       let line = []
       let limit = Math.floor(60 / basePeriod)
-      let hour = baseHours[i]
+      let hour = ('00' + baseHours[i].toString()).slice(-2)
       let hm = ''
       for (let j = 0; j < limit; j++) {
-        hm = hour.toString() + ':' + ('00' + j * basePeriod).slice(-2)
+        // 時刻 09:05:00
+        hm = hour + ':' + ('00' + j * basePeriod).slice(-2) + ':' + '00'
         //console.log('hm=', hm)
         this.baseList.push(hm)
       }
@@ -193,15 +232,17 @@ export default {
       let list1 = []
       for (let j = 0; j < this.dayCount; j++) {
         datetime =
-          this.days[j].item.format('YYYY/MM/DD') + ' ' + this.baseList[i]
-        //console.log('datetime=', datetime)
+          this.days[j].item.format('YYYY/MM/DD') + 'T' + this.baseList[i]
+        console.log('datetime=', datetime)
+        // console.log('this.baseList[i]=', this.baseList[i])
         list1.push(datetime)
       }
       this.bookingTimeList.push(list1)
     }
 
-    console.log(this.bookingTimeList)
-    console.log(this.bookingTimeList[0])
+    //console.log(this.bookingTimeList)
+    //console.log(this.bookingTimeList[0])
+    */
 
     //
     // OLD CODE
@@ -295,14 +336,14 @@ export default {
   },
   computed: {
     count() {
-      console.log('Call the computed count')
+      //console.log('Call the computed count')
       return this.$store.state.counter.count
     },
   },
   methods: {
     debugMode() {
       this.debug = !this.debug
-      console.log('Call debugMode ', this.debug)
+      //console.log('Call debugMode ', this.debug)
       //this.$set(this.debug, 0, !this.debug)
     },
     // 週の並びを更新
@@ -335,7 +376,10 @@ export default {
       }
 
       // 新たな週スタート日
-      let newStart = mode ? start.add(7, 'day') : start.subtract(7, 'day')
+      let newStart = start
+      if (mode != undefined) {
+        newStart = mode == 1 ? start.add(7, 'day') : start.subtract(7, 'day')
+      }
 
       for (let i = 0; i < dayCount; i++) {
         let item = i == 0 ? newStart : newStart.add(i, 'day')
@@ -362,7 +406,7 @@ export default {
         } else if (ym1 && ym1 == ym) {
           cnt++
         }
-        console.log('cnt=', cnt)
+        //console.log('cnt=', cnt)
         //
         // 配列の更新では画面に反映されない場合がある
         // その場合は$setを利用する、Vueが監視出来る配列のメソッドを使う
@@ -381,9 +425,6 @@ export default {
       // 予約日時リスト作成
       //
 
-      // クリア
-      //this.bookingTimeList.splice(0, this.bookingTimeList.length)
-
       // baseHour取得
       let baseHours = [9, 10, 11, 12]
       // 分の単位はどこまでか
@@ -396,41 +437,95 @@ export default {
       for (let i = 0; i < baseHours.length; i++) {
         let line = []
         let limit = Math.floor(60 / basePeriod)
-        let hour = baseHours[i]
-        let hm = ''
+        let hourNumber = baseHours[i]
+        let hourStr = ('00' + baseHours[i].toString()).slice(-2)
+        let hm1 = ''
+        let hm2 = ''
         for (let j = 0; j < limit; j++) {
-          hm = hour.toString() + ':' + ('00' + j * basePeriod).slice(-2)
+          // 時刻 09:05:00
+          hm1 = hourNumber.toString() + ':' + ('00' + j * basePeriod).slice(-2)
+          hm2 = hourStr + ':' + ('00' + j * basePeriod).slice(-2) + ':' + '00'
+          //hm = hour.toString() + ':' + ('00' + j * basePeriod).slice(-2)
           //console.log('hm=', hm)
-          this.baseList.push(hm)
+          this.baseList.push(hm1)
+
+          let list1 = []
+          for (let j = 0; j < this.dayCount; j++) {
+            let datetime = this.days[j].item.format('YYYY/MM/DD') + 'T' + hm2
+            // this.days[j].item.format('YYYY/MM/DD') + ' ' + this.baseList[i]
+            //console.log('datetime=', datetime)
+            list1.push(datetime)
+          }
+          this.bookingTimeList.push(list1)
         }
       }
 
+      /*
       // 全ての時間割りを計算してリストにする
-      console.log('this.baseList.length=', this.baseList.length)
+      //console.log('this.baseList.length=', this.baseList.length)
       for (let i = 0; i < this.baseList.length; i++) {
         let datetime
         let list1 = []
         for (let j = 0; j < this.dayCount; j++) {
           datetime =
-            this.days[j].item.format('YYYY/MM/DD') + ' ' + this.baseList[i]
+            this.days[j].item.format('YYYY/MM/DD') + 'T' + this.baseList[i]
+          // this.days[j].item.format('YYYY/MM/DD') + ' ' + this.baseList[i]
           //console.log('datetime=', datetime)
           list1.push(datetime)
         }
         this.bookingTimeList.push(list1)
       }
+      */
 
       //console.log(this.bookingTimeList)
-      console.log(this.bookingTimeList[0])
+      //console.log(this.bookingTimeList[0])
     },
     doConfirm(event) {
       // event: 選択日時(文字列)
       //        2020/09/22 9:00
       // ここで担当者情報を付加して遷移
       console.log(event)
+      this.bookingTime = event
+
       // 遷移の場合
       //this.$router.push('/confirm')
       // 遷移させない場合
       this.isConfirm = true
+      this.$modal.show('confirm-content')
+      /*
+      this.$modal.show('dialog', {
+        title: 'The standard Lorem Ipsum passage',
+        text: 'Lorem ipsum dolor sit amet, ...',
+        buttons: [
+          {
+            title: 'Cancel',
+            handler: () => {
+              this.isConfirm = false
+              this.$modal.hide('dialog')
+            },
+          },
+          {
+            title: 'Like',
+            handler: () => {
+              alert('Like action')
+            },
+          },
+          {
+            title: 'Repost',
+            handler: () => {
+              alert('Repost action')
+            },
+          },
+        ],
+      })
+      */
+    },
+    hide() {
+      this.bookingDateTime = undefined
+      this.bookingDate = undefined
+      this.bookingTime = undefined
+      this.isConfirm = false
+      this.$modal.hide('confirm-content')
     },
   },
 }

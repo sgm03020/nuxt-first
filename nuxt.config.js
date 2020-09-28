@@ -18,8 +18,10 @@ export default {
   css: [],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
+  // { src: "~/plugins/vue-js-modal", ssr: false },
   plugins: [
     { src: '~/plugins/vue-good-table', ssr: false },
+    { src: '~/plugins/vue-js-modal.js', ssr: false},
     '~/plugins/utils.js',    
   ],
 
