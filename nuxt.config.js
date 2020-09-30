@@ -21,7 +21,7 @@ export default {
   // { src: "~/plugins/vue-js-modal", ssr: false },
   plugins: [
     { src: '~/plugins/vue-good-table', ssr: false },
-    { src: '~/plugins/vue-js-modal.js', ssr: false},
+    '~/plugins/vue-js-modal.js',
     '~/plugins/utils.js',    
   ],
 

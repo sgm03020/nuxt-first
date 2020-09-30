@@ -64,7 +64,6 @@
     >
       <h2 class="ma-2 pa-2">予約依頼のご確認</h2>
       <p></p>
-      <!-- v-if="!isConfirm"  -->
       <v-container v-if="isConfirm" class="ma-2 pa-2">
         <v-row justify="center" align="center">
           <v-card>
@@ -78,7 +77,6 @@
                 )
               }}
             </v-card-title>
-            <!-- justify-center -->
             <v-row class="mx-0">
               <v-spacer />
               <v-card-title class="mt-2 mx-6 mb-2 pa-0">
@@ -88,20 +86,12 @@
           </v-card>
         </v-row>
         <v-row class="justify-space-between mx-2 pa-2">
-          <!-- <v-btn @click="isConfirm = !isConfirm">前の画面</v-btn> -->
           <v-btn v-on:click="hide">閉じる</v-btn>
           <nuxt-link to="/">Topへ戻る</nuxt-link>
         </v-row>
       </v-container>
     </modal>
 
-    <!-- https://euvl.github.io/vue-js-modal/Properties.html#properties-2 -->
-    <v-dialog
-      width="100%"
-      minHeight="800"
-      :adaptive="true"
-      :clickToClose="false"
-    />
   </div>
 </template>
 
