@@ -306,7 +306,7 @@ export default {
         this.days.push({ item, year, month, yymm, mm, day, dow, ym, cr, pt })
       }
       //console.log('ym1=', ym1, ' ym2=', ym2, ' cnt=', cnt)
-      console.log(this.days)
+      // console.log(this.days)
       this.sow = newStart
       this.ymCount = cnt
 
@@ -342,7 +342,7 @@ export default {
             let datetime = this.days[j].item.format('YYYY/MM/DD') + 'T' + hm2
             // 過去日時の個数を記録
             if (now.unix() >= this.$dayjs(datetime).unix()) {
-                console.log('datetime=', datetime)
+                // console.log('datetime=', datetime)
                 ptCount++
             }
 
