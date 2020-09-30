@@ -130,7 +130,8 @@
             {{ baseList[i] }}
             <!-- <button type="button" class="clear-decoration" v-on:click="greet" >BTN</button> -->
           </td>
-          <td v-for="(tm, j) in el" :key="j">
+          <!-- bt : booking date time -->
+          <td v-for="(bt, j) in el" :key="j">
             <!-- <button
               :key="j"
               :data-booking-time="tm"              
@@ -139,7 +140,15 @@
               class="clear-decoration ma-0 pa-2"
               v-on:click="greet"
             >&nbsp;</button> -->
-            <v-card flat hover :data-booking-time="tm" :key="j" @click="select(tm)">
+            <v-card
+              light
+              class="ma-0 pa-0"
+              tile
+              flat
+              :disabled="((j*baseList.length + i) < ptcount)"
+              :key="j"
+              @click="select(bt)"
+            >
               <!-- <v-img
                 src="https://picsum.photos/id/11/500/300"
                 lazy-src="https://picsum.photos/id/11/10/6"
@@ -150,7 +159,15 @@
               >
               </v-img> -->
               <!-- <span style="color:red;">◎</span> -->
-              ◎
+              {{ days[j].pt ? '-' : '◎' }}
+              <!-- ★重要★ -->
+              <!-- {{}}内での比較演算子<,>などを使うとeslintが警告を出す -->
+              <!-- コンパイルは通るが、警告を出さないようにするには -->
+              <!-- 回避としては &lt;を使うか、eslintのオプションを無視にする -->
+              <!-- vue / no-parsing-error -->
+              <!-- Parsing error: invalid-first-character-of-tag-name. -->
+              <!-- https://github.com/vuejs/eslint-plugin-vue/issues/370 -->
+              {{((j*baseList.length + i) &lt; ptcount) ? '過去':'未来'}}
             </v-card>
             <!-- <v-btn small text @click="greet" class="ma-0 pa-0">
               <v-icon>mdi-circle</v-icon>
@@ -185,6 +202,10 @@ export default {
     ymcount: {
       type: Number,
       default: 7,
+    },
+    ptcount: {
+      type: Number,
+      default: 0,
     },
     ymlist: {
       type: Array,

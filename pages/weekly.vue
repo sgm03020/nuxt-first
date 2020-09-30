@@ -34,7 +34,10 @@
             </v-btn>
           </v-row>
         </v-container>
-        <!-- v-if="!isConfirm" -->
+        <!-- 要点 -->
+        <!-- 1. 日の情報だけ持つ days (days) -->
+        <!-- 2. 基本時刻リスト(9,10,11) (baseList)-->
+        <!-- 3. 各日の各時刻の情報リスト(timeList) -->
         <WeeklyRawTable
           :debug="debug"
           :ip="ip"
@@ -42,6 +45,7 @@
           :now="now"
           :days="days"
           :ymcount="ymCount"
+          :ptcount="ptCount"
           :baseList="baseList"
           :timeList="bookingTimeList"
           @select="doConfirm($event)"
@@ -65,9 +69,7 @@
         <v-row justify="center" align="center">
           <v-card>
             <v-row class="mx-0">
-              <v-card-title class="mt-2 mx-6 mb-2 pa-0">
-                担当：
-              </v-card-title>
+              <v-card-title class="mt-2 mx-6 mb-2 pa-0"> 担当： </v-card-title>
             </v-row>
             <v-card-title class="mt-3 mb-0 mx-6 pa-0">
               {{
@@ -142,6 +144,7 @@ export default {
       sow: undefined,
       ymCount: 7,
       dayCount: 7,
+      ptCount : 0, // 過去日時の個数
       days: [],
       baseHours: [],
       baseList: [],
@@ -151,6 +154,7 @@ export default {
   },
   // 初期データを取得(fetch)
   async fetch() {
+    console.log('call fetch')
     const { ip } = this.$axios.$get('http://icanhazip.com')
     this.ip = '0'
 
@@ -258,6 +262,7 @@ export default {
 
       // 新たな週スタート日
       let newStart = start
+      let now = this.$dayjs()
       if (mode != undefined) {
         newStart = mode == 1 ? start.add(7, 'day') : start.subtract(7, 'day')
       }
@@ -273,6 +278,9 @@ export default {
         let day = item.format('D')
         let dow = '(' + item.format('ddd') + ')'
         let ym = item.format('YYYY/MM') || undefined
+        // この場所は時間情報はないので.unix()で比較しても意味なし
+        // ここでは日のみの比較しか出来ない
+        let pt = item < now ? true : false
         let cr = '#333'
         if (item.day() == 0) {
           cr = 'red'
@@ -295,7 +303,7 @@ export default {
         // Vueが監視出来る配列のメソッドを使う
         // push(), pop(), shift(), unshift(), splice(), sort(), reverse()
         //
-        this.days.push({ item, year, month, yymm, mm, day, dow, ym, cr })
+        this.days.push({ item, year, month, yymm, mm, day, dow, ym, cr, pt })
       }
       //console.log('ym1=', ym1, ' ym2=', ym2, ' cnt=', cnt)
       console.log(this.days)
@@ -315,6 +323,7 @@ export default {
       // 予約日時
       //let bookingTimeList = []
 
+      let ptCount = 0; // 過去時間である個数を数える
       for (let i = 0; i < baseHours.length; i++) {
         let line = []
         let limit = Math.floor(60 / basePeriod)
@@ -326,20 +335,25 @@ export default {
           // 時刻 09:05:00
           hm1 = hourNumber.toString() + ':' + ('00' + j * basePeriod).slice(-2)
           hm2 = hourStr + ':' + ('00' + j * basePeriod).slice(-2) + ':' + '00'
-          //hm = hour.toString() + ':' + ('00' + j * basePeriod).slice(-2)
-          //console.log('hm=', hm)
           this.baseList.push(hm1)
 
           let list1 = []
           for (let j = 0; j < this.dayCount; j++) {
             let datetime = this.days[j].item.format('YYYY/MM/DD') + 'T' + hm2
-            // this.days[j].item.format('YYYY/MM/DD') + ' ' + this.baseList[i]
-            //console.log('datetime=', datetime)
+            // 過去日時の個数を記録
+            if (now.unix() >= this.$dayjs(datetime).unix()) {
+                console.log('datetime=', datetime)
+                ptCount++
+            }
+
             list1.push(datetime)
           }
           this.bookingTimeList.push(list1)
         }
       }
+      // ptCount
+      console.log('ptCount=', ptCount)
+      this.ptCount = ptCount
 
       /*
       // 全ての時間割りを計算してリストにする
@@ -365,7 +379,7 @@ export default {
       // event: 選択日時(文字列)
       //        2020/09/22 9:00
       // ここで担当者情報を付加して遷移
-      console.log(event)
+      console.log('doConfirm event=', event)
       this.bookingTime = event
 
       // 遷移の場合
