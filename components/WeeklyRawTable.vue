@@ -145,7 +145,7 @@
               class="ma-0 pa-0"
               tile
               flat
-              :disabled="((j*baseList.length + i) < ptcount)"
+              :disabled="j * baseList.length + i < ptcount"
               :key="j"
               @click="select(bt)"
             >
@@ -159,7 +159,12 @@
               >
               </v-img> -->
               <!-- <span style="color:red;">◎</span> -->
-              {{ days[j].pt ? '-' : '◎' }}
+              <!-- 最初の方法 -->
+              <!-- {{ days[j].pt ? '-' : '◎' }} -->
+              <!-- 次の方法 -->
+              <span class="items">
+                {{((j*baseList.length + i) &lt; ptcount) ? '-':'◎'}}
+              </span>
               <!-- ★重要★ -->
               <!-- {{}}内での比較演算子<,>などを使うとeslintが警告を出す -->
               <!-- コンパイルは通るが、警告を出さないようにするには -->
@@ -167,7 +172,7 @@
               <!-- vue / no-parsing-error -->
               <!-- Parsing error: invalid-first-character-of-tag-name. -->
               <!-- https://github.com/vuejs/eslint-plugin-vue/issues/370 -->
-              {{((j*baseList.length + i) &lt; ptcount) ? '過去':'未来'}}
+              <!-- {{((j*baseList.length + i) &lt; ptcount) ? '過去':'未来'}} -->
             </v-card>
             <!-- <v-btn small text @click="greet" class="ma-0 pa-0">
               <v-icon>mdi-circle</v-icon>
@@ -435,5 +440,9 @@ button.clear-decoration {
   outline: none;
   border: 1px solid #f00;
   background-color: rgb(255, 0, 0, 0.2);
+}
+
+.items {
+  font-size: large;
 }
 </style>

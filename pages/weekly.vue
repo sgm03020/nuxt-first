@@ -1,9 +1,3 @@
-<!--
-<template>
-  <WeeklyBase />
-</template>
--->
-
 <!-- 1. 週間予約カレンダー -->
 <template>
   <div class="container ma-0 pa-0">
@@ -11,14 +5,15 @@
     <!-- <ItemForHour /> -->
     <!-- <WeeklyGoodTable /> -->
     <!-- <WeeklyTest /> -->
-    <h3>weekly page count: {{ count }}</h3>
-    <h4>isConfirm:{{ this.isConfirm }}</h4>
-    <!-- <h3>initDays.d1: {{initDays.d1}}</h3> -->
-    <!-- <h3>{{initDays.d1.format('YYYY/MM/DD')}}</h3> -->
-    <!-- <h3>{{this.$strLength('123')}}</h3> -->
-    <!-- :now="now" -->
-    <!-- v-model="now" -->
-    <!-- v-if="!isConfirm"  -->
+    <div v-show="debug">
+      <h4>weekly page count: {{ count }}</h4>
+      <h4>isConfirm:{{ this.isConfirm }}</h4>
+      <h4>ptCount:{{ this.ptCount }}</h4>
+      <h4>{{ this.debugStr }}</h4>
+      <h4></h4>
+      <h4></h4>
+    </div>
+    <!-- 画面効果 -->
     <transition name="fade" mode="out-in">
       <div v-if="!isConfirm">
         <v-container class="ma-0 pa-0">
@@ -91,7 +86,6 @@
         </v-row>
       </v-container>
     </modal>
-
   </div>
 </template>
 
@@ -107,6 +101,10 @@ import WeeklyTest from '@/components/WeeklyTest'
 
 // ロケール日本で月曜スタートになっていないために使う
 import updateLocale from 'dayjs/plugin/updateLocale'
+// タイマープラグイン
+// import SetInterval from '@/plugins/SetInterval'
+import dateTimeToJaDate from '@/plugins/SetInterval'
+import setInterval from '@/plugins/SetInterval'
 
 export default {
   // mixins: [Mixin],
@@ -125,7 +123,9 @@ export default {
     return {
       show: true,
       debug: false,
+      debugStr: 'debug str',
       isConfirm: false,
+      timerId: -1, // タイマーid
       bookingDateTime: undefined, //未使用
       bookingDate: undefined, //未使用
       bookingTime: undefined,
@@ -134,7 +134,7 @@ export default {
       sow: undefined,
       ymCount: 7,
       dayCount: 7,
-      ptCount : 0, // 過去日時の個数
+      ptCount: 0, // 過去日時の個数
       days: [],
       baseHours: [],
       baseList: [],
@@ -206,11 +206,55 @@ export default {
     */
     return null
   },
+  created() {},
+  destroyed() {
+    console.log('intervals:', this.$intervals)
+    //this.$clearIerval(this.timerId)
+    this.$clearAllIntervals()
+    this.timerId = -1
+    console.log('Call destroyed')
+  },
   computed: {
     count() {
       //console.log('Call the computed count')
       return this.$store.state.counter.count
     },
+  },
+  mounted() {
+    console.log('Call mounted')
+    // タイマー始動
+    if (this.timerId < 0) {
+      this.timerId = this.$setInterval(
+        function () {
+          console.log('Timer')
+          let now = this.$dayjs()
+          let cnt = 0
+          let isOver = false
+          let t
+          for (let i = 0; i < this.dayCount; i++) {
+            for (let j = 0; j < this.baseList.length; j++) {
+              cnt++
+              t = this.$dayjs(this.bookingTimeList[j][i])
+              if (t > now) {
+                isOver = true
+                break
+              }
+            }
+            if (isOver) break
+          }
+          // prettier-ignore
+          //console.log('Timer cnt=', cnt, ' t=', t.format('YYYY/MM/DD (ddd) hh:mm'))
+          let debugStr = 'Timer cnt-1=' + (cnt - 1) + ' t=' + t.format('YYYY/MM/DD (ddd) hh:mm')
+          this.debugStr = debugStr
+
+          // 過去個数の更新をかける
+          if (this.ptCount < cnt - 1) this.ptCount = cnt - 1
+          //
+        }.bind(this),
+        30000
+      )
+      console.log('setInterval id=', this.timerId)
+    }
   },
   methods: {
     debugMode() {
@@ -308,12 +352,11 @@ export default {
       let baseHours = [9, 10, 11, 12]
       // 分の単位はどこまでか
       let basePeriod = 15
-      // 予約可能時刻のリストを作る
-      //let baseList = []
-      // 予約日時
-      //let bookingTimeList = []
 
-      let ptCount = 0; // 過去時間である個数を数える
+      // 予約日時のリストを作る
+      // 1週間分が横軸、可能時刻が縦軸
+      // として2次元配列になる
+      let ptCount = 0 // 過去時間である個数を数える
       for (let i = 0; i < baseHours.length; i++) {
         let line = []
         let limit = Math.floor(60 / basePeriod)
@@ -326,19 +369,19 @@ export default {
           hm1 = hourNumber.toString() + ':' + ('00' + j * basePeriod).slice(-2)
           hm2 = hourStr + ':' + ('00' + j * basePeriod).slice(-2) + ':' + '00'
           this.baseList.push(hm1)
-
-          let list1 = []
+          // 指定時間(縦) に対応する日(横)にそって日時の情報を作成
+          let line1 = [] // 1行分
           for (let j = 0; j < this.dayCount; j++) {
             let datetime = this.days[j].item.format('YYYY/MM/DD') + 'T' + hm2
             // 過去日時の個数を記録
             if (now.unix() >= this.$dayjs(datetime).unix()) {
-                // console.log('datetime=', datetime)
-                ptCount++
+              // console.log('datetime=', datetime)
+              ptCount++
             }
 
-            list1.push(datetime)
+            line1.push(datetime)
           }
-          this.bookingTimeList.push(list1)
+          this.bookingTimeList.push(line1)
         }
       }
       // ptCount
